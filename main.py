@@ -5,6 +5,9 @@ import math
 import random
 import time
 
+
+#### Basic pygame setup
+
 pygame.init()
 pygame.font.init()
 
@@ -23,7 +26,7 @@ def distance(pos1, pos2):
     return math.sqrt((pos1.x-pos2.x)**2 + (pos1.y-pos2.y)**2)
 
 
-# keeps track of scor and displays if implemented in the gameloop
+# keeps track of score and displays if implemented in the gameloop
 class Counter:
     wins_p1 = 0
     wins_p2 = 0
@@ -83,7 +86,7 @@ class Pong:
 
 
 
-# checks if a player collides with th window and sets a flag
+# checks if a player collides with the window and sets a flag
 def player_col_det(p, window): 
     if p.rect.top <= window.top:
         p.col = 1
@@ -134,7 +137,7 @@ def pong_col_det(pon, window, pl1, pl2, counter):
 
 
 
-
+# projects all players and pongs to the pygame screen 
 def draw_window(win, players, pongs):
     for player in players:
         screen.blit(player[0].surface, (player[0].rect.left, player[0].rect.top))
@@ -177,22 +180,19 @@ def eval_genomes(genomes, config):
 
     while len(players) > 0:  # pygame mainloop, as long as player pairs are alive
         
-        
         clock.tick(FPS)
         screen.fill(BLACK)
         
-        
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT: 
                 sys.exit()
+
         window = pygame.draw.rect(screen, WHITE, (0, 0, 720, 480), 15)
 
 
-        for x, player in enumerate(players):
-            
-            
+        ## evaluate each player pairs fitness and their genes ouputs for the next move 
 
+        for x, player in enumerate(players):
             col_with_pong = pong_col_det(pongs[x], window, player[0], player[1], counters[x])
             player_col_det(player[0], window)
             player_col_det(player[1], window)
@@ -200,28 +200,24 @@ def eval_genomes(genomes, config):
             pongs[x].move()
 
             if col_with_pong:
-                genes[x].fitness += 10
+                genes[x].fitness += 10  #  one of the players in the pair hits the pong, their fitness increases
 
-            #genes[x].fitness -= 0.001 * (abs(pongs[x].pos.y - player[0].pos.y) + abs(pongs[x].pos.y - player[0].pos.y))
-            
-
-            #genes[x].fitness += 0.005
-            
 
             # depending on the output of net net, the players act accordingly
 
-            output = nets[x].activate((player[0].pos.y, pongs[x].pos.y))
+            output = nets[x].activate((player[0].pos.y, pongs[x].pos.y)) # Feed forward with y pos of players and y pos of the ball
             output2 = nets[x].activate((player[1].pos.y, pongs[x].pos.y))
-            #print(distance(pongs[x].pos, player[1].pos))
 
+            # left player
 
             if output[0] > 0.66 and not player[0].col == 1:
-                player[0].move(-1)
+                player[0].move(-1) # move up
             if output[0] < 0.66 and output[0] > 0.33:
-                player[0].move(0)
+                player[0].move(0) # don't move
             if output[0] < 0.33 and not player[0].col == -1:
-                player[0].move(1)
+                player[0].move(1) # move down
 
+            # right player
 
             if output2[0] > 0.66 and not player[1].col == 1:
                 player[1].move(-1)
@@ -242,19 +238,13 @@ def eval_genomes(genomes, config):
                 pongs.remove(pongs[x])
                 genes.remove(genes[x])
                 nets.remove(nets[x])
-                #players.remove(player)
-                '''genes.pop(x)
-                nets.pop(x)
-                pongs.pop(x)
-                players.pop(x)'''
                 
 
         count = myfont.render(f"Pop Count: {len(players)}, Gen: {gen}", False, WHITE)
         
         draw_window(window, players, pongs)
-        
         screen.blit(count, (30,30))
-        #screen.blit(counter.scoreSurface, (720/2 - counter.scoreSurface.get_width() / 2, 40))
+
         pygame.display.flip()
 
 
