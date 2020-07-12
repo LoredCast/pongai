@@ -1,8 +1,10 @@
 # Pong AI
 
-### A neat-python implementation on the simple pong game
+A neat-python implementation on the simple pong game
 
 ![Demo](res/demo.gif)
+
+*Training simulation on a population of 50 for 2 generations*
 
 ## Requirements
 
