@@ -6,7 +6,7 @@ import random
 import time
 
 
-#### Basic pygame setup
+#### Basic pygame setup ###
 
 pygame.init()
 pygame.font.init()
@@ -96,6 +96,7 @@ def player_col_det(p, window):
     else:
         p.col = 0
 
+
 # checks if the pong hits an obstacle and reflects off of it, return True if collision with player
 def pong_col_det(pon, window, pl1, pl2, counter):
     if pon.rect.top <= window.top:
@@ -133,7 +134,6 @@ def pong_col_det(pon, window, pl1, pl2, counter):
         pon.setDir((pon.dirv.x + 0.1 * random.random(), pon.dirv.y + 0.1 *  random.random()))
         return True
         
-
 
 
 
